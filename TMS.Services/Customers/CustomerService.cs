@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TMS.core;
+using TMS.core.Caching;
 using TMS.core.Data;
 using TMS.core.Domain.Blogs;
 using TMS.core.Domain.Catalog;
@@ -13,6 +15,10 @@ using TMS.core.Domain.Forums;
 using TMS.core.Domain.News;
 using TMS.core.Domain.Orders;
 using TMS.core.Domain.Polls;
+using TMS.core.Domain.Shipping;
+using TMS.Data;
+using TMS.Services.Common;
+using TMS.Services.Events;
 
 namespace TMS.Services.Customers
 {
@@ -330,7 +336,7 @@ namespace TMS.Services.Customers
                 throw new ArgumentNullException("customer");
 
             if (customer.IsSystemAccount)
-                throw new NopException(string.Format("System customer account ({0}) could not be deleted", customer.SystemName));
+                throw new TMSException(string.Format("System customer account ({0}) could not be deleted", customer.SystemName));
 
             customer.Deleted = true;
 
@@ -475,7 +481,7 @@ namespace TMS.Services.Customers
             //add to 'Guests' role
             var guestRole = GetCustomerRoleBySystemName(SystemCustomerRoleNames.Guests);
             if (guestRole == null)
-                throw new NopException("'Guests' role could not be loaded");
+                throw new TMSException("'Guests' role could not be loaded");
             customer.CustomerRoles.Add(guestRole);
 
             _customerRepository.Insert(customer);
@@ -626,7 +632,7 @@ namespace TMS.Services.Customers
 
                 var guestRole = GetCustomerRoleBySystemName(SystemCustomerRoleNames.Guests);
                 if (guestRole == null)
-                    throw new NopException("'Guests' role could not be loaded");
+                    throw new TMSException("'Guests' role could not be loaded");
 
                 var query = _customerRepository.Table;
                 if (createdFromUtc.HasValue)
@@ -735,7 +741,7 @@ namespace TMS.Services.Customers
                 throw new ArgumentNullException("customerRole");
 
             if (customerRole.IsSystemRole)
-                throw new NopException("System role could not be deleted");
+                throw new TMSException("System role could not be deleted");
 
             _customerRoleRepository.Delete(customerRole);
 

@@ -6,8 +6,6 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using TMS.core;
 using TMS.Data.Mapping;
 
@@ -126,7 +124,7 @@ namespace TMS.Data
 
             var result = this.Database.SqlQuery<TEntity>(commandText, parameters).ToList();
 
-            //performance hack applied as described here - http://www.nopcommerce.com/boards/t/25483/fix-very-important-speed-improvement.aspx
+            //performance hack applied as described here - https://goo.gl/WXg5FC
             bool acd = this.Configuration.AutoDetectChangesEnabled;
             try
             {
